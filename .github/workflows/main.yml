@@ -29,7 +29,7 @@ jobs:
               echo "SUCCESS: building Dockerfile: $file"
             else
               echo "FAILURE: building Dockerfile: $file"
-            done
+            fi
           done
           echo "-------------------------------------------"
             
