@@ -15,18 +15,6 @@ jobs:
           files: |
             **/Dockerfile
 
-      - name: List all changed Dockerfiles
-        if: steps.changed-dockerfiles.outputs.any_changed == 'true'
-        env:
-          ALL_CHANGED_FILES: ${{ steps.changed-dockerfiles.outputs.all_changed_files }}
-        run: |
-          echo "----------- All Changed Dockerfiles -----------"
-          for file in ${ALL_CHANGED_FILES}; do
-            echo "$file"
-          done
-          echo "-----------------------------------------------"
-          echo ""
-
       - name: Test building images from Dockerfiles
         if: steps.changed-dockerfiles.outputs.any_changed == 'true'
         env:
