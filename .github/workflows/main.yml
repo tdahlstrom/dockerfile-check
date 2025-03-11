@@ -22,10 +22,10 @@ jobs:
         run: |
           echo "----------- Testing Dockerfiles -----------"
           for file in ${ALL_CHANGED_FILES}; do
-            echo "Building Dockerfile: $file"
+            echo "TEST: Building Dockerfile: $file"
             docker build -t test:test -f $file . &> /dev/null
             docker rmi test:test &> /dev/null
-            echo "SUCCESS: building Dockerfile: $file"
+            echo "SUCCESS: built Dockerfile: $file"
           done
           echo "-------------------------------------------"
             
