@@ -16,7 +16,6 @@ jobs:
             **/Dockerfile
 
       - name: Test building images from Dockerfiles
-        continue-on-error: true
         if: steps.changed-dockerfiles.outputs.any_changed == 'true'
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-dockerfiles.outputs.all_changed_files }}
@@ -25,12 +24,8 @@ jobs:
           for file in ${ALL_CHANGED_FILES}; do
             echo "Building Dockerfile: $file"
             docker build -t test:test -f $file . &> /dev/null
-            if [ $? -eq 0 ]; then
-              docker rmi test:test
-              echo "SUCCESS: building Dockerfile: $file"
-            else
-              echo "FAILURE: building Dockerfile: $file"
-            fi
+            docker rmi test:test &> /dev/null
+            echo "SUCCESS: building Dockerfile: $file"
           done
           echo "-------------------------------------------"
             
