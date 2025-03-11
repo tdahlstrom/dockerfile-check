@@ -23,7 +23,7 @@ jobs:
           echo "----------- Testing Dockerfiles -----------"
           for file in ${ALL_CHANGED_FILES}; do
             echo "Building Dockerfile: $file"
-            docker build -t test:test -f $file . > /dev/null
+            docker build -t test:test -f $file . &> /dev/null
             if [ $? -eq 0 ]; then
               docker rmi test:test
               echo "SUCCESS: building Dockerfile: $file"
