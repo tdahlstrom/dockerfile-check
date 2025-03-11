@@ -1,0 +1,47 @@
+name: Dockerfile Check
+
+on: [push]
+
+jobs:
+  changed_files:
+    runs-on: ubuntu-24.04
+    name: Test for updated Dockerfiles
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get changed Dockerfiles
+        id: changed-dockerfiles
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            **/Dockerfile
+
+      - name: List all changed Dockerfiles
+        if: steps.changed-dockerfiles.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-dockerfiles.outputs.all_changed_files }}
+        run: |
+          echo "----------- All Changed Dockerfiles -----------"
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file"
+          done
+          echo "-----------------------------------------------"
+          echo ""
+
+      - name: Test building images from Dockerfiles
+        if: steps.changed-dockerfiles.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-dockerfiles.outputs.all_changed_files }}
+        run: |
+          echo "----------- Testing Dockerfiles -----------"
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "Building Dockerfile: $file"
+            docker build -t test:test -f $file . > /dev/null
+            if [ $? -eq 0 ]; then
+              docker rmi test:test
+              echo "SUCCESS: building Dockerfile: $file"
+            else
+              echo "FAILURE: building Dockerfile: $file"
+            done
+          done
+          echo "-------------------------------------------"
+            
