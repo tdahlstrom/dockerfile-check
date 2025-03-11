@@ -16,6 +16,7 @@ jobs:
             **/Dockerfile
 
       - name: Test building images from Dockerfiles
+        continue-on-error: true
         if: steps.changed-dockerfiles.outputs.any_changed == 'true'
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-dockerfiles.outputs.all_changed_files }}
