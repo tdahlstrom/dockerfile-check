@@ -25,7 +25,7 @@ jobs:
             echo "TEST: Building Dockerfile: $file"
             docker build -t test:test -f $file . &> /dev/null
             docker rmi test:test &> /dev/null
-            echo "SUCCESS: built Dockerfile: $file"
+            echo "SUCCESS: Built Dockerfile: $file"
           done
           echo "-------------------------------------------"
             
