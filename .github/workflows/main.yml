@@ -17,29 +17,14 @@ jobs:
         run: |
           echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs | grep Dockerfile)" >> $GITHUB_OUTPUT
 
-      - name: List changed Dockerfiles
+      - name: Test building images from changed Dockerfiles
         run: |
+          echo "----------- Testing Dockerfiles -----------"
           for file in ${{ steps.changed-files.outputs.changed_files }}; do
-            echo "$file was changed"
+            echo "TEST: Building Dockerfile: $file"
+            docker build -t test:test -f $file . &> /dev/null
+            docker rmi test:test &> /dev/null
+            echo "SUCCESS: Built Dockerfile: $file"
           done
-      # - name: Get changed Dockerfiles
-      #   id: changed-dockerfiles
-      #   uses: tj-actions/changed-files@v45
-      #   with:
-      #     files: |
-      #       **/Dockerfile
-
-      # - name: Test building images from Dockerfiles
-      #   if: steps.changed-dockerfiles.outputs.any_changed == 'true'
-      #   env:
-      #     ALL_CHANGED_FILES: ${{ steps.changed-dockerfiles.outputs.all_changed_files }}
-      #   run: |
-      #     echo "----------- Testing Dockerfiles -----------"
-      #     for file in ${ALL_CHANGED_FILES}; do
-      #       echo "TEST: Building Dockerfile: $file"
-      #       docker build -t test:test -f $file . &> /dev/null
-      #       docker rmi test:test &> /dev/null
-      #       echo "SUCCESS: Built Dockerfile: $file"
-      #     done
-      #     echo "-------------------------------------------"
+          echo "-------------------------------------------"
             
