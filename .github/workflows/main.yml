@@ -21,7 +21,7 @@ jobs:
 
   build_changed_dockerfiles:
     needs: check_changed_dockerfiles
-    if: ${{ needs.check_changed_dockerfiles.outputs.job-total > 0 }}
+    # if: ${{ needs.check_changed_dockerfiles.outputs.job-total > 0 }}
     runs-on: ubuntu-24.04
     strategy:
       matrix:
