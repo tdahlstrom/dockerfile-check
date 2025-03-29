@@ -19,7 +19,7 @@ jobs:
         run: |
           echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs | grep Dockerfile)" >> $GITHUB_OUTPUT
 
-      - run: echo "${{ steps.dockerfiles.outputs.changed_files }}
+      - run: echo "${{ steps.dockerfiles.outputs.changed_files }}"
 
   build_changed_dockerfiles:
     needs: check_changed_dockerfiles
