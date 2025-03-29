@@ -30,8 +30,8 @@ jobs:
         id: convert
         run: |
           string="${{ needs.check_changed_dockerfiles.outputs.changed_files }}"
-          echo "array=($string)" >> $GITHUB_OUTPUT
-          # echo "array=${array[@]}" >> $GITHUB_OUTPUT
+          array=($string)
+          echo "array=$array" >> $GITHUB_OUTPUT
       - name: Test output
         run: |
           echo "${{ steps.convert.outputs.array }}" 
