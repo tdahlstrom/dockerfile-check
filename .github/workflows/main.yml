@@ -17,37 +17,41 @@ jobs:
       - name: Get changed Dockerfiles
         id: dockerfiles
         run: |
-          echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep Dockerfile | xargs)" >> "$GITHUB_OUTPUT"
+          echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep Dockerfile | jq -s -R 'split("\n")'" >> "$GITHUB_OUTPUT"
 
-  array_conversion:
-    needs: check_changed_dockerfiles
-    runs-on: ubuntu-24.04
-    name: Dockerfile string conversion
-    outputs:
-      array: ${{ steps.convert.outputs.array }}
-    steps:
-      - name: Create array
-        id: convert
+      - name: test
         run: |
-          string="${{ needs.check_changed_dockerfiles.outputs.changed_files }}"
-          array=($string)
-          echo "array=$array" >> $GITHUB_OUTPUT
-      - name: Test output
-        run: |
-          echo "${{ steps.convert.outputs.array }}" 
+          echo "${{ steps.dockerfiles.outputs.changed_files }}"
 
-  build_changed_dockerfiles:
-    needs: array_conversion
-    runs-on: ubuntu-24.04
-    strategy:
-      matrix:
-        job_name: ${{ fromJson(needs.array_conversion.outputs.array) }}
-    steps:
-      - name: Test building images from changed Dockerfiles
-        run: |
-          # for file in ${{ matrix.job_name }}; do
-          echo "TESTING: Building Dockerfile: ${{ matrix.job_name }}"
-          docker build -t test:test -f ${{ matrix.job_name }} . &> /dev/null
-          docker rmi test:test &> /dev/null
-          echo "SUCCESS: Built Dockerfile: ${{ matrix.job_name }}"
-          # done
+  # array_conversion:
+  #   needs: check_changed_dockerfiles
+  #   runs-on: ubuntu-24.04
+  #   name: Dockerfile string conversion
+  #   outputs:
+  #     array: ${{ steps.convert.outputs.array }}
+  #   steps:
+  #     - name: Create array
+  #       id: convert
+  #       run: |
+  #         string="${{ needs.check_changed_dockerfiles.outputs.changed_files }}"
+  #         array=($string)
+  #         echo "array=$array" >> $GITHUB_OUTPUT
+  #     - name: Test output
+  #       run: |
+  #         echo "${{ steps.convert.outputs.array }}" 
+
+  # build_changed_dockerfiles:
+  #   needs: array_conversion
+  #   runs-on: ubuntu-24.04
+  #   strategy:
+  #     matrix:
+  #       job_name: ${{ fromJson(needs.array_conversion.outputs.array) }}
+  #   steps:
+  #     - name: Test building images from changed Dockerfiles
+  #       run: |
+  #         # for file in ${{ matrix.job_name }}; do
+  #         echo "TESTING: Building Dockerfile: ${{ matrix.job_name }}"
+  #         docker build -t test:test -f ${{ matrix.job_name }} . &> /dev/null
+  #         docker rmi test:test &> /dev/null
+  #         echo "SUCCESS: Built Dockerfile: ${{ matrix.job_name }}"
+  #         # done
