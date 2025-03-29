@@ -20,6 +20,7 @@ jobs:
           echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep Dockerfile | xargs)" >> "$GITHUB_OUTPUT"
 
   array_conversion:
+    needs: check_changed_dockerfiles
     runs-on: ubuntu-24.04
     name: Dockerfile string conversion
     outputs:
@@ -28,12 +29,12 @@ jobs:
       - name: Create array
         id: convert
         run: |
-          string="${{ needs.check_changed_dockerfiles.outputs.changed_files }}
+          string="${{ needs.check_changed_dockerfiles.outputs.changed_files }}"
           array=($string)
           echo "array=${array[@]}" >> $GITHUB_OUTPUT
 
   build_changed_dockerfiles:
-    needs: check_changed_dockerfiles
+    needs: array_conversion
     runs-on: ubuntu-24.04
     strategy:
       matrix:
