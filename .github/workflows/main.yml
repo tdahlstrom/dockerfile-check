@@ -6,6 +6,8 @@ jobs:
   check_changed_dockerfiles:
     runs-on: ubuntu-24.04
     name: Test for updated Dockerfiles
+    outputs:
+      job_list: ${{ steps.generate.outputs.changed_files }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -17,13 +19,18 @@ jobs:
         run: |
           echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs | grep Dockerfile)" >> $GITHUB_OUTPUT
 
+  build_changed_dockerfiles:
+    needs: check_changed_dockerfiles
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        job_name: ${{ fromJson(needs.check_changed_dockerfiles.outputs.job_list) }}
+    steps:
       - name: Test building images from changed Dockerfiles
         run: |
-          echo "----------- Testing Dockerfiles -----------"
-          for file in ${{ steps.changed-files.outputs.changed_files }}; do
-            echo "TEST: Building Dockerfile: $file"
+          for file in ${{ matrix.job_name }}; do
+            echo "TESTING: Building Dockerfile: $file"
             docker build -t test:test -f $file . &> /dev/null
             docker rmi test:test &> /dev/null
             echo "SUCCESS: Built Dockerfile: $file"
           done
-          echo "-------------------------------------------"
