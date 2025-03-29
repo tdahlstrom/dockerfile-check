@@ -21,10 +21,11 @@ jobs:
 
   build_changed_dockerfiles:
     needs: check_changed_dockerfiles
+    if: ${{ needs.check_changed_dockerfiles.outputs.length > 0 }}
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        job_name: ${{ toJson(needs.check_changed_dockerfiles.outputs.job_list) }}
+        job_name: ${{ fromJson(needs.check_changed_dockerfiles.outputs.job_list) }}
     steps:
       - name: Test building images from changed Dockerfiles
         run: |
