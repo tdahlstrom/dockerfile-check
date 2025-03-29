@@ -28,9 +28,9 @@ jobs:
     steps:
       - name: Test building images from changed Dockerfiles
         run: |
-          for file in ${{ matrix.job_name }}; do
-            echo "TESTING: Building Dockerfile: $file"
-            docker build -t test:test -f $file . &> /dev/null
-            docker rmi test:test &> /dev/null
-            echo "SUCCESS: Built Dockerfile: $file"
-          done
+          # for file in ${{ matrix.job_name }}; do
+          echo "TESTING: Building Dockerfile: ${{ matrix.job_name }}"
+          docker build -t test:test -f ${{ matrix.job_name }} . &> /dev/null
+          docker rmi test:test &> /dev/null
+          echo "SUCCESS: Built Dockerfile: ${{ matrix.job_name }}"
+          # done
