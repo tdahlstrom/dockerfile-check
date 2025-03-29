@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-24.04
     name: Test for updated Dockerfiles
     outputs:
-      job_list: ${{ steps.generate.outputs.changed_files }}
+      job_list: ${{ steps.dockerfiles.outputs.changed_files }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -15,9 +15,9 @@ jobs:
           fetch-depth: 0
           
       - name: Get changed Dockerfiles
-        id: changed-files
+        id: dockerfiles
         run: |
-          echo "::set-output name=changed_files::$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs | grep Dockerfile)"
+          echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs | grep Dockerfile)" >> $GITHUB_OUTPUT
 
   build_changed_dockerfiles:
     needs: check_changed_dockerfiles
