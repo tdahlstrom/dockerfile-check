@@ -17,7 +17,7 @@ jobs:
       - name: Get changed Dockerfiles
         id: dockerfiles
         run: |
-          echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep Dockerfile | jq -s -R 'split("\n") | map(select(. != ""))'" >> "$GITHUB_OUTPUT"
+          echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep Dockerfile | jq -s -R 'split(\"\n\") | map(select(. != \"\"))'" >> "$GITHUB_OUTPUT"
 
       - name: test
         run: |
