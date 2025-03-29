@@ -19,14 +19,12 @@ jobs:
         run: |
           echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs | grep Dockerfile)" >> $GITHUB_OUTPUT
 
-      - run: echo "${{ steps.dockerfiles.outputs.changed_files }}"
-
   build_changed_dockerfiles:
     needs: check_changed_dockerfiles
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        job_name: ${{ fromJson(needs.check_changed_dockerfiles.outputs.job_list) }}
+        job_name: ${{ toJson(needs.check_changed_dockerfiles.outputs.job_list) }}
     steps:
       - name: Test building images from changed Dockerfiles
         run: |
