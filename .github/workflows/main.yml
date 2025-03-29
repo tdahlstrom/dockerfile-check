@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-24.04
     name: Test for updated Dockerfiles
     outputs:
-      job_list: ${{ steps.dockerfiles.outputs.changed_files }}
+      changed_files: ${{ steps.dockerfiles.outputs.changed_files }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        job_name: ${{ fromJson(needs.check_changed_dockerfiles.outputs.job_list) }}
+        job_name: ${{ fromJson(needs.check_changed_dockerfiles.outputs.changed_files) }}
     steps:
       - name: Test building images from changed Dockerfiles
         run: |
