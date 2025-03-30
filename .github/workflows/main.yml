@@ -30,7 +30,7 @@ jobs:
         run: |
           # for file in ${{ matrix.job_name }}; do
           echo "TESTING: Building Dockerfile: ${{ matrix.job_name }}"
-          docker build -t test:test -f ${{ matrix.job_name }} . &> /dev/null
+          docker build -t test:test -f ${{ matrix.job_name }} .
           docker rmi test:test &> /dev/null
           echo "SUCCESS: Built Dockerfile: ${{ matrix.job_name }}"
           # done
