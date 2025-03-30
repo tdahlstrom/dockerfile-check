@@ -29,7 +29,7 @@ jobs:
     strategy:
       matrix:
         job_name: ${{ fromJson(needs.check_changed_dockerfiles.outputs.changed_files) }}
-    if: matrix.job_name != null && matrix.job_name != ''
+    if: ${{ matrix.job_name }} != null && ${{ matrix.job_name }} != ''
     steps:
       - name: Checkout
         uses: actions/checkout@v4
